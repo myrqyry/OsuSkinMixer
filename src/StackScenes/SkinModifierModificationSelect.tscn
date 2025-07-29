@@ -156,6 +156,13 @@ size_flags_vertical = 4
 text = "Apply changes"
 icon = ExtResource("7_mb77d")
 
+[node name="AiGeneratorButton" parent="HBoxContainer" instance=ExtResource("4_qbo2l")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Generate with AI"
+
 [node name="LoadingPopup" parent="." instance=ExtResource("3_dgftf")]
 unique_name_in_owner = true
 layout_mode = 2

@@ -34,11 +34,15 @@ public partial class SkinModifierModificationSelect : StackScene
     private CheckBox DisableAnimationsCheckBox;
     private LoadingPopup LoadingPopup;
 
+    private PackedScene AiGeneratorScene;
+    private Button AiGeneratorButton;
+
     public override void _Ready()
     {
         SkinInfoScene = GD.Load<PackedScene>("res://src/StackScenes/SkinInfo.tscn");
         ComboColourContainerScene = GD.Load<PackedScene>("res://src/Components/Osu/ComboColoursContainer.tscn");
         CursorColourContainerScene = GD.Load<PackedScene>("res://src/Components/Osu/CursorColourContainer.tscn");
+        AiGeneratorScene = GD.Load<PackedScene>("res://src/StackScenes/AiGenerator/AiGenerator.tscn");
 
         SkinOptionsSelector = GetNode<SkinOptionsSelector>("%SkinOptionsSelector");
         ComboColourContainer = GetNode<ExpandablePanelContainer>("%ComboColourContainer");
@@ -47,6 +51,7 @@ public partial class SkinModifierModificationSelect : StackScene
         DefaultSkinComponent = GetNode<SkinComponent>("%DefaultSkinComponent");
         BlankComponent = GetNode<SkinComponent>("%BlankComponent");
         ApplyChangesButton = GetNode<Button>("%ApplyChangesButton");
+        AiGeneratorButton = GetNode<Button>("%AiGeneratorButton");
         ComboColoursContainerCollection = GetNode<VBoxContainer>("%ComboColoursContainerCollection");
         CursorColourContainerCollection = GetNode<VBoxContainer>("%CursorColourContainerCollection");
         SmoothTrailCheckBox = GetNode<CheckBox>("%SmoothTrailCheckBox");
@@ -58,6 +63,7 @@ public partial class SkinModifierModificationSelect : StackScene
         DefaultSkinComponent.LeftClicked += () => SkinOptionsSelector.OptionComponentSelected(new SkinOptionValue(SkinOptionValueType.DefaultSkin));
         BlankComponent.LeftClicked += () => SkinOptionsSelector.OptionComponentSelected(new SkinOptionValue(SkinOptionValueType.Blank));
         ApplyChangesButton.Pressed += OnApplyChangesButtonPressed;
+        AiGeneratorButton.Pressed += OnAiGeneratorButtonPressed;
         LoadingPopup.CancelAction = OnCancelButtonPressed;
         LoadingPopup.DisableCancelAt = SkinModifierMachine.UNCANCELLABLE_AFTER;
         SmoothTrailCheckBox.Pressed += OnExperimentalOptionsStateChanged;
@@ -205,5 +211,12 @@ public partial class SkinModifierModificationSelect : StackScene
     private void OnCancelButtonPressed()
     {
         CancellationTokenSource?.Cancel();
+    }
+
+    private void OnAiGeneratorButtonPressed()
+    {
+        var instance = AiGeneratorScene.Instantiate<AiGenerator>();
+        instance.Skin = SkinsToModify[0];
+        EmitSignal(SignalName.ScenePushed, instance);
     }
 }
