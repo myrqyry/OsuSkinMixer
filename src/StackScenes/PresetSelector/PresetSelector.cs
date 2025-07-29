@@ -1,5 +1,6 @@
 using Godot;
 using OsuSkinMixer.Models.Presets;
+using OsuSkinMixer.Statics;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -8,34 +9,32 @@ namespace OsuSkinMixer.StackScenes;
 
 public partial class PresetSelector : StackScene
 {
-    [Signal]
-    public delegate void PresetSelectedEventHandler(SkinPreset preset);
+    public override string Title => "Presets";
 
-    private VBoxContainer PresetList;
+    private PackedScene PresetButtonScene;
+
+    private VBoxContainer PresetsContainer;
 
     public override void _Ready()
     {
-        PresetList = GetNode<VBoxContainer>("%PresetList");
-        var presets = LoadPresets();
+        base._Ready();
+
+        PresetButtonScene = GD.Load<PackedScene>("res://src/Components/MenuButton.tscn");
+        PresetsContainer = GetNode<VBoxContainer>("%PresetsContainer");
+
+        string presetsJson = File.ReadAllText(ProjectSettings.GlobalizePath("res://assets/presets.json"));
+        List<SkinPreset> presets = JsonSerializer.Deserialize<List<SkinPreset>>(presetsJson);
 
         foreach (var preset in presets)
         {
-            var button = new Button();
+            var button = PresetButtonScene.Instantiate<Button>();
             button.Text = preset.Name;
-            button.Pressed += () => OnPresetButtonPressed(preset);
-            PresetList.AddChild(button);
+            button.Pressed += () =>
+            {
+                Settings.LoadPreset(preset.Name);
+                EmitSignal(SignalName.ScenePopped);
+            };
+            PresetsContainer.AddChild(button);
         }
-    }
-
-    private void OnPresetButtonPressed(SkinPreset preset)
-    {
-        EmitSignal(SignalName.PresetSelected, preset);
-        EmitSignal(SignalName.ScenePopped);
-    }
-
-    private IEnumerable<SkinPreset> LoadPresets()
-    {
-        string presetsJson = File.ReadAllText("assets/presets.json");
-        return JsonSerializer.Deserialize<IEnumerable<SkinPreset>>(presetsJson);
     }
 }

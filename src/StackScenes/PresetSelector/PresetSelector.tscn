@@ -28,6 +28,6 @@ horizontal_alignment = 1
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="PresetList" type="VBoxContainer" parent="VBoxContainer"]
+[node name="PresetsContainer" type="VBoxContainer" parent="VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2

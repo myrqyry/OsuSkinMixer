@@ -17,5 +17,142 @@
                 }
             }
         ]
+    },
+    {
+        "Name": "Legacy",
+        "Options": [
+            {
+                "Name": "Cursor",
+                "Value": {
+                    "Type": "Legacy",
+                    "Value": null
+                }
+            },
+            {
+                "Name": "Hitsounds",
+                "Value": {
+                    "Type": "Legacy",
+                    "Value": null
+                }
+            }
+        ]
+    },
+    {
+        "Name": "Modern",
+        "Options": [
+            {
+                "Name": "Cursor",
+                "Value": {
+                    "Type": "Modern",
+                    "Value": null
+                }
+            },
+            {
+                "Name": "Hitsounds",
+                "Value": {
+                    "Type": "Modern",
+                    "Value": null
+                }
+            }
+        ]
+    },
+    {
+        "Name": "Colorful",
+        "Options": [
+            {
+                "Name": "Combo1",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(255, 0, 0, 1)"
+                }
+            },
+            {
+                "Name": "Combo2",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(0, 255, 0, 1)"
+                }
+            },
+            {
+                "Name": "Combo3",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(0, 0, 255, 1)"
+                }
+            }
+        ]
+    },
+    {
+        "Name": "Minimalist",
+        "Options": [
+            {
+                "Name": "Cursor",
+                "Value": {
+                    "Type": "Blank",
+                    "Value": null
+                }
+            },
+            {
+                "Name": "Hitsounds",
+                "Value": {
+                    "Type": "Blank",
+                    "Value": null
+                }
+            }
+        ]
+    },
+    {
+        "Name": "Rainbow",
+        "Options": [
+            {
+                "Name": "Combo1",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(255, 0, 0, 1)"
+                }
+            },
+            {
+                "Name": "Combo2",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(255, 127, 0, 1)"
+                }
+            },
+            {
+                "Name": "Combo3",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(255, 255, 0, 1)"
+                }
+            },
+            {
+                "Name": "Combo4",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(0, 255, 0, 1)"
+                }
+            },
+            {
+                "Name": "Combo5",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(0, 0, 255, 1)"
+                }
+            },
+            {
+                "Name": "Combo6",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(75, 0, 130, 1)"
+                }
+            },
+            {
+                "Name": "Combo7",
+                "Value": {
+                    "Type": "Skin",
+                    "Value": "rgba(148, 0, 211, 1)"
+                }
+            }
+        ]
     }
 ]

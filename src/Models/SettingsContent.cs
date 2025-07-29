@@ -50,5 +50,8 @@ public static partial class Settings
         [JsonPropertyName("skins_folder")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string SkinsFolder { get; set; }
+
+        [JsonPropertyName("preset_name")]
+        public string PresetName { get; set; }
     }
 }

@@ -50,15 +50,7 @@ public partial class Menu : StackScene
 
     private void OnPresetsButtonPressed()
     {
-        var presetSelector = PresetSelectorScene.Instantiate<PresetSelector>();
-        presetSelector.PresetSelected += preset =>
-        {
-            var skinMixer = SkinMixerScene.Instantiate<SkinMixer>();
-            skinMixer.ApplyPreset(preset);
-            EmitSignal(SignalName.ScenePushed, skinMixer);
-        };
-
-        EmitSignal(SignalName.ScenePushed, presetSelector);
+        EmitSignal(SignalName.ScenePushed, PresetSelectorScene.Instantiate<StackScene>());
     }
 
     private void OnLuckyButtonPressed()

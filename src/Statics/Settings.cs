@@ -202,6 +202,12 @@ public static partial class Settings
         ExceptionPushed?.Invoke(ex);
     }
 
+    public static void LoadPreset(string name)
+    {
+        Content.PresetName = name;
+        Save();
+    }
+
     private static void MigrateSettings()
     {
         // Migration from before v2.1.0
