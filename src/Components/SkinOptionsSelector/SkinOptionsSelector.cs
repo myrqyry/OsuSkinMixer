@@ -134,6 +134,16 @@ public partial class SkinOptionsSelector : PanelContainer
         }
     }
 
+    public void ApplyOption(SkinOption option)
+    {
+        var component = SkinOptionComponents.Find(c => c.SkinOption.Name == option.Name);
+        if (component != null)
+        {
+            SkinOptionComponentInSelection = component;
+            OptionComponentSelected(option.Value);
+        }
+    }
+
     public void OptionComponentSelected(SkinOptionValue valueSelected)
     {
         // TODO: This method can be optimized further by recursively looping through the components and their

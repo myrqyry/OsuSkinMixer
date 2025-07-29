@@ -1,0 +1,21 @@
+[
+    {
+        "Name": "Default",
+        "Options": [
+            {
+                "Name": "Cursor",
+                "Value": {
+                    "Type": "Unchanged",
+                    "Value": null
+                }
+            },
+            {
+                "Name": "Hitsounds",
+                "Value": {
+                    "Type": "Unchanged",
+                    "Value": null
+                }
+            }
+        ]
+    }
+]

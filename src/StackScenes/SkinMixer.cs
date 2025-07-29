@@ -39,6 +39,14 @@ public partial class SkinMixer : StackScene
         SkinOptionsSelector.CreateOptionComponents(new SkinOptionValue(SkinOptionValueType.DefaultSkin));
     }
 
+    public void ApplyPreset(OsuSkinMixer.Models.Presets.SkinPreset preset)
+    {
+        foreach (var option in preset.Options)
+        {
+            SkinOptionsSelector.ApplyOption(option);
+        }
+    }
+
     private void OnCreateSkinButtonPressed()
     {
         SkinNamePopup.In();

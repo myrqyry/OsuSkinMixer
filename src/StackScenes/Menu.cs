@@ -10,12 +10,14 @@ public partial class Menu : StackScene
     private PackedScene SkinMixerScene;
     private PackedScene SkinModifierSkinSelectScene;
     private PackedScene SkinManagerScene;
+    private PackedScene PresetSelectorScene;
 
     private Button SkinMixerButton;
     private Button SkinModifierButton;
     private Button SkinManagerButton;
     private Button GetMoreSkinsButton;
     private Button LuckyButton;
+    private Button PresetsButton;
     private TextureButton IconButton;
     private GetMoreSkinsPopup GetMoreSkinsPopup;
 
@@ -26,6 +28,7 @@ public partial class Menu : StackScene
         SkinMixerScene = GD.Load<PackedScene>("res://src/StackScenes/SkinMixer.tscn");
         SkinModifierSkinSelectScene = GD.Load<PackedScene>("res://src/StackScenes/SkinModifierSkinSelect.tscn");
         SkinManagerScene = GD.Load<PackedScene>("res://src/StackScenes/SkinManager.tscn");
+        PresetSelectorScene = GD.Load<PackedScene>("res://src/StackScenes/PresetSelector/PresetSelector.tscn");
 
         SkinMixerButton = GetNode<Button>("%SkinMixerButton");
         SkinModifierButton = GetNode<Button>("%SkinModifierButton");
@@ -34,13 +37,28 @@ public partial class Menu : StackScene
         IconButton = GetNode<TextureButton>("%IconButton");
         GetMoreSkinsPopup = GetNode<GetMoreSkinsPopup>("%GetMoreSkinsPopup");
         LuckyButton = GetNode<Button>("%LuckyButton");
+        PresetsButton = GetNode<Button>("%PresetsButton");
 
         SkinMixerButton.Pressed += () => EmitSignal(SignalName.ScenePushed, SkinMixerScene.Instantiate<StackScene>());
         SkinModifierButton.Pressed += () => EmitSignal(SignalName.ScenePushed, SkinModifierSkinSelectScene.Instantiate<StackScene>());
         SkinManagerButton.Pressed += () => EmitSignal(SignalName.ScenePushed, SkinManagerScene.Instantiate<StackScene>());
         GetMoreSkinsButton.Pressed += GetMoreSkinsPopup.In;
         LuckyButton.Pressed += OnLuckyButtonPressed;
+        PresetsButton.Pressed += OnPresetsButtonPressed;
         IconButton.Pressed += () => OS.ShellOpen($"https://github.com/{Settings.GITHUB_REPO_PATH}");
+    }
+
+    private void OnPresetsButtonPressed()
+    {
+        var presetSelector = PresetSelectorScene.Instantiate<PresetSelector>();
+        presetSelector.PresetSelected += preset =>
+        {
+            var skinMixer = SkinMixerScene.Instantiate<SkinMixer>();
+            skinMixer.ApplyPreset(preset);
+            EmitSignal(SignalName.ScenePushed, skinMixer);
+        };
+
+        EmitSignal(SignalName.ScenePushed, presetSelector);
     }
 
     private void OnLuckyButtonPressed()
