@@ -7,6 +7,14 @@ using System.Text.Json;
 namespace OsuSkinMixer.StackScenes;
 
 using OsuSkinMixer.Models;
+using System.Collections.Generic;
+
+public class SkinElementMetadata
+{
+    public string Name { get; set; }
+    public string Author { get; set; }
+    public List<string> Colors { get; set; }
+}
 
 public partial class AiGenerator : StackScene
 {
@@ -107,6 +115,25 @@ public partial class AiGenerator : StackScene
             $"x-goog-api-key: {apiKey}"
         };
 
+        requestData.generationConfig = new
+        {
+            response_mime_type = "application/json",
+            response_schema = new
+            {
+                type = "object",
+                properties = new
+                {
+                    name = new { type = "string" },
+                    author = new { type = "string" },
+                    colors = new
+                    {
+                        type = "array",
+                        items = new { type = "string" }
+                    }
+                }
+            }
+        };
+
         HttpRequest.Request(apiEndpoint, headers, HttpClient.Method.Post, JsonSerializer.Serialize(requestData));
     }
 
@@ -125,29 +152,20 @@ public partial class AiGenerator : StackScene
         var parts = content.GetProperty("parts");
         var firstPart = parts[0];
 
-        if (firstPart.TryGetProperty("functionCall", out var functionCall))
-        {
-            var functionName = functionCall.GetProperty("name").GetString();
-            if (functionName == "replaceSkinElement")
-            {
-                var args = functionCall.GetProperty("args");
-                var elementName = args.GetProperty("elementName").GetString();
-                ReplaceSkinElement(elementName, SelectedImagePath);
-            }
-        }
-        else if (firstPart.TryGetProperty("inlineData", out var inlineData))
-        {
-            var data = inlineData.GetProperty("data").GetString();
-            var imageBytes = Convert.FromBase64String(data);
-            var image = new Image();
-            image.LoadPngFromBuffer(imageBytes);
+        var json = JsonDocument.Parse(Encoding.UTF8.GetString(body));
+        var metadata = JsonSerializer.Deserialize<SkinElementMetadata>(json.RootElement.GetProperty("text").GetString());
 
-            var texture = ImageTexture.CreateFromImage(image);
-            TextureRect.Texture = texture;
-        }
+        var imageBytes = Convert.FromBase64String(json.RootElement.GetProperty("inlineData").GetProperty("data").GetString());
+        var image = new Image();
+        image.LoadPngFromBuffer(imageBytes);
+
+        var texture = ImageTexture.CreateFromImage(image);
+        TextureRect.Texture = texture;
+
+        ReplaceSkinElement(metadata.Name, SelectedImagePath, metadata);
     }
 
-    private void ReplaceSkinElement(string elementName, string imagePath)
+    private void ReplaceSkinElement(string elementName, string imagePath, SkinElementMetadata metadata)
     {
         string skinFolderPath = Skin.Directory.FullName;
         string newImagePath = Path.Combine(skinFolderPath, elementName + ".png");
@@ -157,31 +175,37 @@ public partial class AiGenerator : StackScene
 
         File.Copy(imagePath, newImagePath);
 
-        if (elementName == "cursor" || elementName == "hitcircle")
+        string skinIniPath = Path.Combine(Skin.Directory.FullName, "skin.ini");
+        if (File.Exists(skinIniPath))
         {
-            string skinIniPath = Path.Combine(Skin.Directory.FullName, "skin.ini");
-            if (File.Exists(skinIniPath))
+            var skinIni = new OsuSkinIni(File.ReadAllText(skinIniPath));
+            var generalSection = skinIni.Sections.Find(s => s.Name == "General");
+            if (generalSection != null)
             {
-                var skinIni = new OsuSkinIni(File.ReadAllText(skinIniPath));
+                generalSection["Name"] = metadata.Name;
+                generalSection["Author"] = metadata.Author;
+
                 if (elementName == "cursor")
                 {
-                    var generalSection = skinIni.Sections.Find(s => s.Name == "General");
-                    if (generalSection != null)
-                    {
-                        generalSection["CursorRotate"] = "0";
-                        generalSection["CursorExpand"] = "0";
-                    }
+                    generalSection["CursorRotate"] = "0";
+                    generalSection["CursorExpand"] = "0";
                 }
                 else if (elementName == "hitcircle")
                 {
-                    var generalSection = skinIni.Sections.Find(s => s.Name == "General");
-                    if (generalSection != null)
-                    {
-                        generalSection["HitCircleOverlayAboveNumber"] = "0";
-                    }
+                    generalSection["HitCircleOverlayAboveNumber"] = "0";
                 }
-                File.WriteAllText(skinIniPath, skinIni.ToString());
             }
+
+            var coloursSection = skinIni.Sections.Find(s => s.Name == "Colours");
+            if (coloursSection != null)
+            {
+                for (int i = 0; i < metadata.Colors.Count; i++)
+                {
+                    coloursSection[$"Combo{i + 1}"] = metadata.Colors[i];
+                }
+            }
+
+            File.WriteAllText(skinIniPath, skinIni.ToString());
         }
 
         OsuData.RequestSkinInfo(new[] { Skin });
