@@ -30,6 +30,10 @@ public partial class AiGenerator : StackScene
     private FileDialog FileDialog;
 
     private string SelectedImagePath;
+    private string SelectedStyle;
+
+    private StyleSelector StyleSelector;
+    private Button SelectStyleButton;
 
     public override void _Ready()
     {
@@ -38,14 +42,23 @@ public partial class AiGenerator : StackScene
         PromptEdit = GetNode<LineEdit>("%Prompt");
         SelectImageButton = GetNode<Button>("%SelectImageButton");
         GenerateButton = GetNode<Button>("%GenerateButton");
+        SelectStyleButton = GetNode<Button>("%SelectStyleButton");
         TextureRect = GetNode<TextureRect>("%TextureRect");
         HttpRequest = GetNode<HttpRequest>("HttpRequest");
         FileDialog = GetNode<FileDialog>("FileDialog");
+        StyleSelector = GetNode<StyleSelector>("StyleSelector");
 
         SelectImageButton.Pressed += () => FileDialog.PopupCentered();
         FileDialog.FileSelected += OnFileSelected;
         GenerateButton.Pressed += OnGenerateButtonPressed;
+        SelectStyleButton.Pressed += () => StyleSelector.In();
+        StyleSelector.StyleSelected += OnStyleSelected;
         HttpRequest.RequestCompleted += OnRequestCompleted;
+    }
+
+    private void OnStyleSelected(string style)
+    {
+        SelectedStyle = style;
     }
 
     private void OnFileSelected(string path)
@@ -69,7 +82,7 @@ public partial class AiGenerator : StackScene
                 {
                     parts = new object[]
                     {
-                        new { text = PromptEdit.Text },
+                        new { text = $"{PromptEdit.Text} in the style of {SelectedStyle}" },
                         new
                         {
                             inline_data = new

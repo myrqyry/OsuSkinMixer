@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cgt7d5l7g2a3e"]
+[gd_scene load_steps=3 format=3 uid="uid://cgt7d5l7g2a3e"]
 
 [ext_resource type="Script" path="res://src/StackScenes/AiGenerator/AiGenerator.cs" id="1_vj5qg"]
+[ext_resource type="PackedScene" uid="uid://bcy8j8f8j8f8" path="res://src/Components/StyleSelector.tscn" id="2_abcde"]
 
 [node name="AiGenerator" type="Control"]
 layout_mode = 3
@@ -48,6 +49,10 @@ text = "Select Image"
 layout_mode = 2
 text = "Generate"
 
+[node name="SelectStyleButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Select Style"
+
 [node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
@@ -63,3 +68,6 @@ ok_button_text = "Open"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.png", "*.jpg")
+
+[node name="StyleSelector" parent="." instance=ExtResource("2_abcde")]
+visible = false

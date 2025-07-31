@@ -47,6 +47,8 @@ public class OsuSkin
 
     public bool Hidden { get; set; }
 
+    public string Style { get; set; }
+
     public Color[] ComboColors
     {
         get
