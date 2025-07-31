@@ -134,6 +134,109 @@ public partial class AiGenerator : StackScene
             }
         };
 
+        requestData.tools = new[]
+        {
+            new
+            {
+                function_declarations = new[]
+                {
+                    new
+                    {
+                        name = "create_skin",
+                        description = "Create a new skin.",
+                        parameters = new
+                        {
+                            type = "object",
+                            properties = new
+                            {
+                                name = new
+                                {
+                                    type = "string",
+                                    description = "The name of the skin to create."
+                                }
+                            }
+                        }
+                    },
+                    new
+                    {
+                        name = "create_cursor",
+                        description = "Create a new cursor for a skin.",
+                        parameters = new
+                        {
+                            type = "object",
+                            properties = new
+                            {
+                                skinName = new
+                                {
+                                    type = "string",
+                                    description = "The name of the skin to create the cursor for."
+                                }
+                            }
+                        }
+                    },
+                    new
+                    {
+                        name = "create_hitcircle",
+                        description = "Create a new hitcircle for a skin.",
+                        parameters = new
+                        {
+                            type = "object",
+                            properties = new
+                            {
+                                skinName = new
+                                {
+                                    type = "string",
+                                    description = "The name of the skin to create the hitcircle for."
+                                }
+                            }
+                        }
+                    },
+                    new
+                    {
+                        name = "create_menu_background",
+                        description = "Create a new menu background for a skin.",
+                        parameters = new
+                        {
+                            type = "object",
+                            properties = new
+                            {
+                                skinName = new
+                                {
+                                    type = "string",
+                                    description = "The name of the skin to create the menu background for."
+                                }
+                            }
+                        }
+                    },
+                    new
+                    {
+                        name = "create_animated_menu_background",
+                        description = "Create a new animated menu background for a skin.",
+                        parameters = new
+                        {
+                            type = "object",
+                            properties = new
+                            {
+                                skinName = new
+                                {
+                                    type = "string",
+                                    description = "The name of the skin to create the animated menu background for."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        requestData.generationConfig = new
+        {
+            thinking_config = new
+            {
+                thinking_budget = 1024
+            }
+        };
+
         HttpRequest.Request(apiEndpoint, headers, HttpClient.Method.Post, JsonSerializer.Serialize(requestData));
     }
 
@@ -153,16 +256,33 @@ public partial class AiGenerator : StackScene
         var firstPart = parts[0];
 
         var json = JsonDocument.Parse(Encoding.UTF8.GetString(body));
-        var metadata = JsonSerializer.Deserialize<SkinElementMetadata>(json.RootElement.GetProperty("text").GetString());
+        var functionCall = json.RootElement.GetProperty("candidates")[0].GetProperty("content").GetProperty("parts")[0].GetProperty("functionCall");
+        var functionName = functionCall.GetProperty("name").GetString();
+        var args = functionCall.GetProperty("args");
 
-        var imageBytes = Convert.FromBase64String(json.RootElement.GetProperty("inlineData").GetProperty("data").GetString());
-        var image = new Image();
-        image.LoadPngFromBuffer(imageBytes);
-
-        var texture = ImageTexture.CreateFromImage(image);
-        TextureRect.Texture = texture;
-
-        ReplaceSkinElement(metadata.Name, SelectedImagePath, metadata);
+        switch (functionName)
+        {
+            case "create_skin":
+                var name = args.GetProperty("name").GetString();
+                SkinGenerator.CreateSkin(name, HttpRequest);
+                break;
+            case "create_cursor":
+                var skinName = args.GetProperty("skinName").GetString();
+                SkinGenerator.CreateCursor(skinName);
+                break;
+            case "create_hitcircle":
+                skinName = args.GetProperty("skinName").GetString();
+                SkinGenerator.CreateHitcircle(skinName);
+                break;
+            case "create_menu_background":
+                skinName = args.GetProperty("skinName").GetString();
+                SkinGenerator.CreateMenuBackground(skinName);
+                break;
+            case "create_animated_menu_background":
+                skinName = args.GetProperty("skinName").GetString();
+                SkinGenerator.CreateAnimatedMenuBackground(skinName);
+                break;
+        }
     }
 
     private void ReplaceSkinElement(string elementName, string imagePath, SkinElementMetadata metadata)
